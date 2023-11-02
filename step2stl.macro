@@ -1,0 +1,46 @@
+import os
+import Part
+import Mesh
+from PySide import QtGui
+
+def step_to_stl(step_file, stl_file):
+    try:
+        print(f"Processing STEP file: {step_file}")
+        Part.open(step_file)
+        doc = App.ActiveDocument
+        shape = doc.Objects[0].Shape
+        mesh = Mesh.Mesh()
+        mesh.addFacets(shape.tessellate(0.1))
+        print(f"Writing STL: {stl_file}")
+        mesh.write(stl_file)
+        print(f"STL file saved as: {stl_file}")
+    except Exception as e:
+        print(f"An error occurred while processing {step_file}:")
+        print(str(e))
+    finally:
+        App.closeDocument(doc.Name)
+
+def select_directory(prompt):
+    file_dialog = QtGui.QFileDialog()
+    directory = str(file_dialog.getExistingDirectory(
+        None, caption=prompt, options=QtGui.QFileDialog.ShowDirsOnly))
+    return directory
+
+input_dir = select_directory("Select Input Directory")
+output_dir = select_directory("Select Output Directory")
+
+print(f"Searching STEP files in: {input_dir}")
+
+for root, dirs, files in os.walk(input_dir):
+    for file in files:
+        original_file_path = os.path.join(root, file)
+        sanitized_file_path = os.path.join(root, file.replace(' ', '_'))  # Replace spaces with underscores
+        if original_file_path != sanitized_file_path:
+            os.rename(original_file_path, sanitized_file_path)    # Rename file if sanitization was performed
+        if sanitized_file_path.lower().endswith('.step'):
+            step_path = sanitized_file_path
+            stl_path = os.path.join(output_dir, os.path.splitext(os.path.basename(sanitized_file_path))[0] + '.stl')
+            print(f"Found STEP file: {step_path}")
+            step_to_stl(step_path, stl_path)
+
+print("All conversions have completed.")
