@@ -3,6 +3,8 @@ utilizes FreeCAD's Python libraries to convert CAD files from STEP format to STL
 
 This FreeCAD macro converts all STEP files located in a user-specified directory to STL format and writes the converted files to a user-specified output directory. It renames the files by replacing spaces with underscores for better compatibility with different systems.
 
+This was created to bulk convert the STEP files obtained from McMaster-Carr's online library of files.
+
 To run this macro, you need FreeCAD installed on your machine.
 
 ## How to run the step2stl macro
@@ -19,5 +21,5 @@ If the script encounters any issues while converting a file, it will continue to
 Please note that some limitations may apply to complex and large .step files, as their conversion is subject to FreeCAD's functionality and performance.
 
 ## Dependencies
-*FreeCAD
+* FreeCAD
 * PySide for the GUI dialogs
